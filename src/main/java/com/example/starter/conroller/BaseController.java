@@ -1,5 +1,6 @@
 package com.example.starter.conroller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BaseController {
 
     @GetMapping(path = "/hello")
-    public String sayHello() {
-        return "Hello";
+    public ApiResponse<String> sayHello() {
+        return ApiResponse.createApiResponse(HttpStatus.OK.value(), "HELLO");
     }
 }

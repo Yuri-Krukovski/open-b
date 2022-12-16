@@ -2,11 +2,13 @@ package com.example.starter.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,6 +19,9 @@ public class BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @Version
-    private Integer version;
+    @CreationTimestamp
+    private LocalDateTime createDateTime;
+
+    @UpdateTimestamp
+    private LocalDateTime updateDateTime;
 }
