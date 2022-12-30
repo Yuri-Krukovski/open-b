@@ -15,8 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -106,9 +105,9 @@ public class YapilyProviderClient implements AccountInformationProvider {
                     .map(accountMapper::mapAccounts)
                     .orElseThrow(() -> new RestClientException("No body in the response"));
 
-        } catch (RestClientException e) {
-            log.error("getAccounts:: Failed to retrieve accounts with message {}", e.getMessage());
-            throw new RuntimeException(e);
+        } catch (HttpClientErrorException | HttpServerErrorException | UnknownHttpStatusCodeException ee) {
+            log.error("getAccounts:: Failed to retrieve accounts with message {}", ee.getMessage());
+            throw new ProviderClientException(ee.getMessage(), ee.getRawStatusCode(), ee);
         }
     }
 

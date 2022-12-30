@@ -11,8 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -41,7 +40,7 @@ public class TruelayerProviderClient implements AccountInformationProvider {
 
     @Override
     public List<AccountDto> getAccounts(String consent) {
-        HttpHeaders httpHeaders = new HttpHeaders();
+        final HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(consent);
 
         final URI requestUri = UriComponentsBuilder
@@ -73,9 +72,9 @@ public class TruelayerProviderClient implements AccountInformationProvider {
                     .map(TruelayerAccountsResponse::getResults)
                     .map(accountMapper::mapTruelayerAccounts)
                     .orElseThrow(() -> new RestClientException("No body in the response"));
-        } catch (Exception e) {
-            log.error("getAccounts:: Failed to retrieve accounts with message {}", e.getMessage());
-            throw new RuntimeException(e);
+        } catch (HttpClientErrorException | HttpServerErrorException | UnknownHttpStatusCodeException ee) {
+            log.error("getAccounts:: Failed to retrieve accounts with message {}", ee.getMessage());
+            throw new ProviderClientException(ee.getMessage(), ee.getRawStatusCode(), ee);
         }
     }
 }
